@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 beta = 1
-steps = 100
+steps = 1000
 
 # S
 w_S=1
@@ -32,6 +32,10 @@ tau2 = 0.2
 H_MA = H0 + qt.tensor(qt.qeye(2), H_int)
 U_MA = (-1j * H_MA * tau2).expm()
 
+#Population
+projector = qt.tensor(qt.basis(2,1).proj(), qt.qeye(2))
+prob0 = []
+
 # evolution
 energy0 = qt.expect(H_S, state_S).real
 energy_diff = [] 
@@ -51,6 +55,21 @@ for n in range(steps):
     energy_diff.append(energy1 - energy0)
     energy0 = energy1
 
+    # compute probability
+    prob0.append(qt.expect(projector, SMstate).real)
+
 #plot
 plt.plot(energy_diff)
+plt.xlabel('Steps')
+plt.ylabel('Energy Difference')
+plt.xlim(0, steps)
+plt.show()
+
+plt.plot(prob0,color='0')
+plt.xlabel('Steps') 
+plt.ylabel('Probability of fundamental state')
+plt.xlim(0, steps)
+plt.ylim(0, 1)
+plt.hlines(qt.expect(qt.basis(2,1).proj(), state_A), 0, steps, colors='r', linestyles='dashed', label='Equilibrium Probability')
+plt.legend()
 plt.show()
