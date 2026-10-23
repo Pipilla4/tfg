@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 beta = 1
-steps = 1000
+steps = 5000
 
 # S
 w_S=1
@@ -40,7 +40,7 @@ prob0 = []
 energy0 = qt.expect(H_S, state_S).real
 energy_diff = [] 
 SMstate = qt.tensor(state_S, state_M)
-for n in range(steps):
+for n in range(steps+1):
     # interaction
     SMAstate = U_SM * qt.tensor(SMstate, state_A) * U_SM.dag()
     SMAstate = U_MA * SMAstate * U_MA.dag()
@@ -59,17 +59,21 @@ for n in range(steps):
     prob0.append(qt.expect(projector, SMstate).real)
 
 #plot
+plt.axhline(y=0, color='black', linewidth=1)
 plt.plot(energy_diff)
 plt.xlabel('Steps')
-plt.ylabel('Energy Difference')
+plt.ylabel(r'$\langle\Delta E_S\rangle/\omega_S$')
 plt.xlim(0, steps)
+plt.ylim(-0.01, 0.01)
+plt.grid(alpha=0.5)
 plt.show()
 
-plt.plot(prob0,color='0')
+plt.plot(prob0,color='0',label='Fundamental state probability')
 plt.xlabel('Steps') 
-plt.ylabel('Probability of fundamental state')
+plt.ylabel('Probability')
 plt.xlim(0, steps)
-plt.ylim(0, 1)
+#plt.ylim(0, 1)
 plt.hlines(qt.expect(qt.basis(2,1).proj(), state_A), 0, steps, colors='r', linestyles='dashed', label='Equilibrium Probability')
 plt.legend()
+plt.grid(alpha=0.5)
 plt.show()
